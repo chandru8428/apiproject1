@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Popular Countries</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #f8f9fa, #e0f7fa);
+    }
+
+    h2 {
+      text-align: center;
+      color: #0077cc;
+      margin-bottom: 30px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .info {
+      padding: 15px;
+    }
+
+    .info h3 {
+      margin: 0 0 10px;
+      color: #0077cc;
+    }
+
+    .info p {
+      margin: 4px 0;
+      font-size: 14px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🌍 Top 12 Popular Countries by Region</h2>
+
+  <div class="grid" id="countryGrid"></div>
+
+  <script>
+    const countries = [
+      "India", "United States", "Brazil", "Germany", "Japan",
+      "Australia", "South Africa", "France", "Canada", "Argentina","Russia","China"
+    ];
+
+    async function loadCountries() {
+      const grid = document.getElementById('countryGrid');
+      for (const name of countries) {
+        try {
+          const res = await fetch(`https://restcountries.com/v3.1/name/${name}?fullText=true`);
+          const data = await res.json();
+          const c = data[0];
+
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+            <img src="${c.flags.svg}" alt="Flag of ${c.name.common}">
+            <div class="info">
+              <h3>${c.name.common}</h3>
+              <p><strong>Region:</strong> ${c.region}</p>
+              <p><strong>Capital:</strong> ${c.capital?.[0]}</p>
+              <p><strong>Population:</strong> ${c.population.toLocaleString()}</p>
+            </div>
+          `;
+          grid.appendChild(card);
+        } catch (error) {
+          console.error(`Failed to load ${name}:`, error);
+        }
+      }
+    }
+
+    loadCountries();
+  </script>
+
+</body>
+</html>
